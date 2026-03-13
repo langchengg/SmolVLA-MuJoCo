@@ -1,0 +1,102 @@
+# =============================================================================
+# SmolVLA Evaluation Configuration
+# =============================================================================
+
+evaluation:
+  # General
+  n_episodes: 50
+  max_steps_per_episode: 300
+  render: true
+  save_videos: true
+  video_fps: 30
+
+  # === Innovation 1: Language Generalization ===
+  language_generalization:
+    enabled: true
+    n_episodes_per_variant: 20
+    # Training instructions → Test variants
+    instruction_variants:
+      - original: "pick up the red cube"
+        variants:
+          - "grasp the crimson block"
+          - "grab the red box"
+          - "take the scarlet cube"
+          - "lift the ruby-colored block"
+          - "seize the red object"
+      - original: "put the bowl on the plate"
+        variants:
+          - "place the dish on the saucer"
+          - "move the bowl onto the plate"
+          - "set the bowl on top of the flat dish"
+          - "transfer the round container to the plate"
+      - original: "push the blue button"
+        variants:
+          - "press the azure switch"
+          - "tap the navy button"
+          - "activate the blue control"
+    # Spatial generalization: randomize object positions
+    spatial_generalization:
+      enabled: true
+      position_noise_std: 0.05    # meters
+      orientation_noise_std: 0.1  # radians
+
+  # === Innovation 2: Visual Perturbation Robustness ===
+  robustness:
+    enabled: true
+    n_episodes_per_condition: 20
+    perturbation_types:
+      brightness:
+        levels: [0.5, 0.75, 1.0, 1.25, 1.5]
+        # 1.0 = normal, <1 = darker, >1 = brighter
+      contrast:
+        levels: [0.5, 0.75, 1.0, 1.25, 1.5]
+      gaussian_noise:
+        sigma_levels: [0.0, 0.02, 0.05, 0.1, 0.15]
+      camera_shift:
+        x_offsets: [-0.05, -0.02, 0.0, 0.02, 0.05]  # meters
+        y_offsets: [-0.05, -0.02, 0.0, 0.02, 0.05]
+      background_change:
+        textures: ["default", "wood", "marble", "checkered", "plain_white"]
+      camera_angle:
+        elevation_offsets: [-15, -5, 0, 5, 15]  # degrees
+        azimuth_offsets: [-15, -5, 0, 5, 15]
+
+  # === Innovation 3: Action Chunking Ablation ===
+  chunking:
+    enabled: true
+    n_episodes_per_config: 30
+    chunk_sizes: [1, 2, 4, 8, 16]
+    metrics:
+      - "success_rate"
+      - "path_smoothness"      # L2 jerk metric
+      - "completion_time"
+      - "total_distance"
+      - "action_variance"
+
+  # === Innovation 4: Computational Efficiency ===
+  efficiency:
+    enabled: true
+    n_warmup_steps: 50
+    n_benchmark_steps: 200
+    configurations:
+      - name: "fp32"
+        dtype: "float32"
+        quantization: null
+      - name: "fp16"
+        dtype: "float16"
+        quantization: null
+      - name: "bf16"
+        dtype: "bfloat16"
+        quantization: null
+      - name: "int8"
+        dtype: "float16"
+        quantization: "int8"
+      - name: "int4"
+        dtype: "float16"
+        quantization: "int4"
+    metrics:
+      - "inference_latency_ms"
+      - "throughput_hz"
+      - "memory_mb"
+      - "success_rate"
+    realtime_threshold_hz: 10.0   # Target for real-time control
