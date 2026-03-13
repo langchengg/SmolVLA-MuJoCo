@@ -256,9 +256,15 @@ class SmolVLAWrapper(nn.Module):
                 dtype=torch.long,
             ).unsqueeze(0).to(self._device)
             
-            state_tensor = torch.from_numpy(
-                state if state is not None else np.zeros(7)
-            ).float().unsqueeze(0).to(self._device)
+            state_np = state if state is not None else np.zeros(7)
+            if state_np.size < 7:
+                state_padded = np.zeros(7)
+                state_padded[:state_np.size] = state_np.flatten()
+                state_np = state_padded
+            else:
+                state_np = state_np.flatten()[:7]
+                
+            state_tensor = torch.from_numpy(state_np).float().unsqueeze(0).to(self._device)
             
             actions = self._model(img_tensor, text_ids, state_tensor)
             actions = actions.squeeze(0).cpu().numpy()

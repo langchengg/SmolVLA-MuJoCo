@@ -100,6 +100,7 @@
 
 ### 1. Installation
 
+**For Local Machines (with Conda):**
 ```bash
 # Clone
 git clone https://github.com/yourusername/smolvla-mujoco.git
@@ -110,6 +111,17 @@ conda create -n smolvla python=3.10 -y
 conda activate smolvla
 
 # Install dependencies
+pip install -r requirements.txt
+pip install -e .
+```
+
+**For Kaggle / Google Colab:**
+```bash
+# You don't need conda, just use the built-in pip:
+# (If you already cloned, skip the first two lines)
+git clone https://github.com/yourusername/smolvla-mujoco.git
+cd smolvla-mujoco
+
 pip install -r requirements.txt
 pip install -e .
 ```

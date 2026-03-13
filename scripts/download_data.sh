@@ -14,7 +14,8 @@ mkdir -p data/
 
 # Download via Python (uses LeRobot / HuggingFace datasets)
 python -c "
-from lerobot.common.datasets.lerobot_dataset import LeRobotDataset
+import os
+from huggingface_hub import snapshot_download
 
 datasets = {
     'LIBERO-Object': 'lerobot/libero_object_no_noops',
@@ -23,19 +24,13 @@ datasets = {
 }
 
 for name, repo_id in datasets.items():
-    print(f'Downloading {name} ({repo_id})...')
+    print(f'Downloading {name} ({repo_id}) to HuggingFace Cache...')
     try:
-        ds = LeRobotDataset(repo_id)
-        print(f'  ✅ {name}: {len(ds)} samples')
+        # snapshot_download automatically caches it exactly where LeRobot expects it
+        snapshot_download(repo_id=repo_id, repo_type='dataset', max_workers=8)
+        print(f'  ✅ {name}: Downloaded successfully')
     except Exception as e:
-        print(f'  ⚠️ {name}: {e}')
-        print(f'  Trying HuggingFace datasets fallback...')
-        try:
-            from datasets import load_dataset
-            ds = load_dataset(repo_id)
-            print(f'  ✅ {name}: loaded via HF datasets')
-        except Exception as e2:
-            print(f'  ❌ {name}: {e2}')
+        print(f'  ❌ {name} failed: {e}')
 
 print()
 print('✅ Dataset download complete!')
