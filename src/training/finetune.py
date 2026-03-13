@@ -75,11 +75,11 @@ class SmolVLAFineTuner:
     Usage (Script):
         >>> config = FineTuneConfig(max_steps=20000, use_wandb=True)
         >>> trainer = SmolVLAFineTuner(config)
-        >>> trainer.setup(model_name="HuggingFaceTB/SmolVLA-base", dataset_repo="lerobot/libero_object_no_noops")
+        >>> trainer.setup(model_name="HuggingFaceTB/SmolVLA-base", dataset_repo="lerobot/libero_object_image")
         >>> trainer.train()
     
     Usage (LeRobot CLI):
-        $ lerobot-train --policy=smolvla --dataset.repo_id=lerobot/libero_object_no_noops
+        $ lerobot-train --policy=smolvla --dataset.repo_id=lerobot/libero_object_image
     """
 
     def __init__(self, config: FineTuneConfig):
@@ -98,7 +98,7 @@ class SmolVLAFineTuner:
     def setup(
         self,
         model_name: str = "HuggingFaceTB/SmolVLA-base",
-        dataset_repo: str = "lerobot/libero_object_no_noops",
+        dataset_repo: str = "lerobot/libero_object_image",
     ):
         """Initialize all components."""
         self._setup_model(model_name)
@@ -491,7 +491,7 @@ def main():
     parser = argparse.ArgumentParser(description="SmolVLA Fine-tuning")
     parser.add_argument("--config", type=str, default="configs/finetune_libero.yaml")
     parser.add_argument("--model", type=str, default="HuggingFaceTB/SmolVLA-base")
-    parser.add_argument("--dataset", type=str, default="lerobot/libero_object_no_noops")
+    parser.add_argument("--dataset", type=str, default="lerobot/libero_object_image")
     parser.add_argument("--max_steps", type=int, default=None)
     parser.add_argument("--batch_size", type=int, default=None)
     parser.add_argument("--lr", type=float, default=None)

@@ -57,7 +57,7 @@ training:
 
 # Dataset Override for Fine-tuning
 dataset:
-  repo_id: "lerobot/libero_object_no_noops"
+  repo_id: "lerobot/libero_object_image"
   train_split: "train[:90%]"
   val_split: "train[90%:]"
   batch_size: 16

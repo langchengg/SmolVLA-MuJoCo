@@ -20,7 +20,7 @@ logger = logging.getLogger(__name__)
 @dataclass
 class DatasetConfig:
     """Dataset configuration."""
-    repo_id: str = "lerobot/libero_object_no_noops"
+    repo_id: str = "lerobot/libero_object_image"
     split: str = "train"
     batch_size: int = 32
     num_workers: int = 4
@@ -50,11 +50,11 @@ class LiberoDatasetLoader:
 
     # Available LIBERO datasets on HuggingFace Hub
     AVAILABLE_DATASETS = {
-        "libero_spatial": "lerobot/libero_spatial_no_noops",
-        "libero_object": "lerobot/libero_object_no_noops",
-        "libero_goal": "lerobot/libero_goal_no_noops",
-        "libero_10": "lerobot/libero_10_no_noops",
-        "libero_90": "lerobot/libero_90_no_noops",
+        "libero_spatial": "lerobot/libero_spatial_image",
+        "libero_object": "lerobot/libero_object_image",
+        "libero_goal": "lerobot/libero_goal_image",
+        "libero_10": "lerobot/libero_10_image",
+        "libero_90": "lerobot/libero_90_image",
         # Additional LeRobot community datasets
         "aloha_mobile": "lerobot/aloha_mobile_cabinet",
         "pusht": "lerobot/pusht",

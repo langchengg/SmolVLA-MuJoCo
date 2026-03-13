@@ -18,9 +18,9 @@ import os
 from huggingface_hub import snapshot_download
 
 datasets = {
-    'LIBERO-Object': 'lerobot/libero_object_no_noops',
-    'LIBERO-Spatial': 'lerobot/libero_spatial_no_noops',
-    'LIBERO-Goal': 'lerobot/libero_goal_no_noops',
+    'LIBERO-Object': 'lerobot/libero_object_image',
+    'LIBERO-Spatial': 'lerobot/libero_spatial_image',
+    'LIBERO-Goal': 'lerobot/libero_goal_image',
 }
 
 for name, repo_id in datasets.items():

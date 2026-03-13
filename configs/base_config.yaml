@@ -37,7 +37,7 @@ environment:
 
 # Dataset Configuration
 dataset:
-  repo_id: "lerobot/libero_object_no_noops"
+  repo_id: "lerobot/libero_object_image"
   split: "train"
   batch_size: 32
   num_workers: 4

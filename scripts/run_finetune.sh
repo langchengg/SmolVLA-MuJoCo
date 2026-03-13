@@ -11,7 +11,7 @@ echo "================================"
 
 # Default arguments
 MODEL="HuggingFaceTB/SmolVLA-base"
-DATASET="lerobot/libero_object_no_noops"
+DATASET="lerobot/libero_object_image"
 CONFIG="configs/finetune_libero.yaml"
 MAX_STEPS=""
 EXTRA_ARGS=""

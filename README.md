@@ -136,7 +136,7 @@ bash scripts/download_data.sh
 
 ```bash
 # Option A: Using LeRobot CLI (recommended)
-lerobot-train --policy=smolvla --dataset.repo_id=lerobot/libero_object_no_noops
+lerobot-train --policy=smolvla --dataset.repo_id=lerobot/libero_object_image
 
 # Option B: Using custom script
 bash scripts/run_finetune.sh
