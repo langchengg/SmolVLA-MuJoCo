@@ -1,0 +1,7 @@
+experiment_family,model_variant,task_family,language_variant,visual_variant,n_episodes,success_rate,object_sort_accuracy,instruction_grounding_accuracy,completion_time_s,mean_policy_latency_ms,rollout_hz,collision_count,trajectory_jerk
+desktop_sorting,zero_shot,color_grouping,exact,nominal,10,0.60,0.78,0.72,14.9,67.8,14.7,0.4,0.35
+desktop_sorting,finetuned,color_grouping,exact,nominal,10,0.90,0.95,0.97,11.7,71.2,14.0,0.1,0.24
+desktop_sorting,zero_shot,paraphrase_generalization,paraphrase,nominal,10,0.30,0.52,0.35,18.2,67.8,14.7,0.3,0.39
+desktop_sorting,finetuned,paraphrase_generalization,paraphrase,nominal,10,0.74,0.83,0.81,13.4,71.2,14.0,0.2,0.28
+desktop_sorting,zero_shot,shape_grouping,exact,low_light,10,0.42,0.61,0.68,17.5,67.8,14.7,0.6,0.41
+desktop_sorting,finetuned,shape_grouping,exact,low_light,10,0.78,0.88,0.93,14.8,71.2,14.0,0.3,0.29

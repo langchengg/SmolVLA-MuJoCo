@@ -1,282 +1,447 @@
-# SmolVLA-MuJoCo: Systematic Evaluation of Vision-Language-Action Models in Simulated Manipulation
+# SmolVLA on MuJoCo: Benchmark + Desktop Sorting Showcase
 
-<div align="center">
+Simulation-first VLA project built around `SmolVLA + LeRobot + MuJoCo + LIBERO`,
+extended with a language-driven desktop grasping and multi-object sorting
+showcase for demo videos, GitHub presentation, and resume packaging.
 
-**Fine-tuning SmolVLA (450M) on LIBERO Benchmark with Multi-Dimensional Evaluation**
+## 1. 项目定位
 
-[![Python 3.10+](https://img.shields.io/badge/Python-3.10+-blue.svg)](https://www.python.org/)
-[![PyTorch](https://img.shields.io/badge/PyTorch-2.1+-ee4c2c.svg)](https://pytorch.org/)
-[![HuggingFace](https://img.shields.io/badge/🤗-HuggingFace-yellow.svg)](https://huggingface.co/)
-[![MuJoCo](https://img.shields.io/badge/MuJoCo-3.0+-green.svg)](https://mujoco.org/)
-[![License: MIT](https://img.shields.io/badge/License-MIT-brightgreen.svg)](LICENSE)
+这个仓库不是“我想做机器人大模型”的口号仓库，而是一个可以真正放到
+GitHub 上的完整项目框架，核心由两条线组成:
 
-[📄 Paper-Style Report](#key-results) · [🚀 Quick Start](#quick-start) · [📊 Results](#key-results) · [🔬 Experiments](#experiments)
+### Track A: Benchmark
 
-</div>
+- 基于 `SmolVLA + LeRobot + LIBERO + MuJoCo`
+- 做标准化评测
+- 关注:
+  - 语言泛化
+  - 空间泛化
+  - 视觉扰动鲁棒性
+  - action chunking
+  - 量化与推理延迟
 
----
+### Track B: Showcase
 
-## 🌟 Highlights
+- 基于 `MuJoCo` 做文本指令驱动桌面抓取与多物体排序
+- 输出可视化视频
+- 更适合放 GitHub 首页、简历、面试演示
 
-- **First systematic multi-dimensional evaluation** of SmolVLA (450M parameter VLA) on LIBERO manipulation benchmarks
-- **4 novel evaluation dimensions**: language generalization, visual robustness, action chunking trade-offs, and deployment efficiency
-- **LoRA fine-tuning** with only 2.3% trainable parameters achieving competitive task success rates
-- **INT4 quantization** achieving 3.2× speedup while maintaining 95%+ relative performance
-- **Fully reproducible**: one-click training and evaluation pipeline, Kaggle notebook included
+最适合你的讲法是:
 
-## 🏗️ Architecture
+`benchmark for rigor + showcase for storytelling`
 
+也就是:
+
+- `LIBERO benchmark` 负责严谨性
+- `desktop sorting demo` 负责可视化与传播力
+
+## 2. 这个仓库最后要呈现成什么样
+
+你最终放到 GitHub 上，不是只放代码，而是至少包含下面这些内容:
+
+1. 清楚的项目简介
+2. 技术栈和系统结构
+3. 环境搭建步骤
+4. 训练命令
+5. 评估命令
+6. 结果分析图
+7. 桌面排序 demo 视频
+8. 失败案例分析
+9. 简历可复用表述
+
+也就是说，这个仓库应该既像:
+
+- 一个可复现项目
+
+又像:
+
+- 一个完成度高的作品集页面
+
+## 3. 为什么这个方向适合你
+
+- `SmolVLA` 足够轻量，适合个人项目和有限算力
+- `LIBERO` 是标准 benchmark，适合做严谨评测
+- `MuJoCo` 适合可视化和视频录制
+- `Panda` 在 `MoveIt` 和 `LIBERO` 生态里最统一
+- 没有真机也可以诚实地做成高质量作品
+
+你不需要假装做过真实机器人部署。真正加分的是:
+
+- 复现能力
+- 实验设计
+- 图表和日志
+- 失败分析
+- 可视化表达
+
+## 4. 当前技术栈
+
+- Base model: `lerobot/smolvla_base`
+- Framework: `LeRobot`
+- Simulator: `MuJoCo`
+- Benchmark: `LIBERO`
+- Robot: `Franka Panda`
+- Planning baseline: `MoveIt + mujoco_ros2_control`
+- Analysis: `pandas + matplotlib`
+- Optional compute: `Colab / Kaggle`
+
+## 5. 仓库结构
+
+```text
+.
+├── README.md
+├── configs
+│   ├── benchmark.yaml
+│   └── desktop_sorting_showcase.yaml
+├── docs
+│   ├── project_roadmap.md
+│   ├── desktop_sorting_showcase.md
+│   ├── mujoco_scene_task_spec.md
+│   └── eval_log_format.md
+├── examples
+│   ├── sample_results.csv
+│   ├── desktop_sorting_eval_log.jsonl
+│   └── desktop_sorting_eval_summary.csv
+├── notebooks
+│   ├── colab_smolvla_libero.ipynb
+│   └── kaggle_smolvla_libero.ipynb
+├── scripts
+│   ├── bootstrap_lerobot.sh
+│   ├── train_libero_smolvla.sh
+│   ├── train_custom_smolvla.sh
+│   ├── eval_libero_smolvla.sh
+│   └── analyze_results.py
+├── src
+│   └── portfolio_vla
+└── templates
+    └── desktop_sorting_prompts.yaml
 ```
-┌──────────────────────────────────────────────────────┐
-│                    INPUT                              │
-│  📸 RGB Image (224×224)  +  📝 Language Instruction   │
-│              +  🦾 Proprioceptive State               │
-└──────────────┬───────────────────────────────────────┘
-               │
-               ▼
-┌──────────────────────────────────────────────────────┐
-│              SmolVLA (450M params)                     │
-│  ┌────────────┐  ┌──────────────┐  ┌──────────────┐ │
-│  │  SigLIP     │  │   SmolLM2    │  │ Action Expert│ │
-│  │  Vision     │→ │  Language    │→ │   MLP Head   │ │
-│  │  Encoder    │  │   Model     │  │  (LoRA-tuned)│ │
-│  └────────────┘  └──────────────┘  └──────────────┘ │
-└──────────────┬───────────────────────────────────────┘
-               │
-               ▼
-┌──────────────────────────────────────────────────────┐
-│            ACTION OUTPUT                              │
-│  🎯 7-DoF Action (6 joints + gripper)                │
-│  Optional: Action Chunking (1/4/8/16 steps)          │
-└──────────────┬───────────────────────────────────────┘
-               │
-               ▼
-┌──────────────────────────────────────────────────────┐
-│         MuJoCo Simulation (LIBERO)                    │
-│  🏭 Tabletop Manipulation Environments               │
-│  📊 Success Rate / Reward / Smoothness Metrics        │
-└──────────────────────────────────────────────────────┘
-```
 
-## 📁 Project Structure
+## 6. 你应该先做什么
 
-```
-├── configs/                    # Configuration files
-│   ├── base_config.yaml        # Base settings
-│   ├── finetune_libero.yaml    # LoRA fine-tuning config
-│   └── eval_config.yaml        # Evaluation experiment configs
-├── src/
-│   ├── env/                    # MuJoCo environment wrappers
-│   │   ├── mujoco_env.py       # Unified LIBERO/MuJoCo interface
-│   │   └── visual_perturbation.py  # Visual perturbation engine
-│   ├── data/                   # Data pipeline
-│   │   ├── dataset_loader.py   # LIBERO dataset loading (LeRobot)
-│   │   └── language_augmentation.py  # Language instruction augmentation
-│   ├── model/                  # Model components
-│   │   ├── smolvla_wrapper.py  # SmolVLA loading + inference
-│   │   ├── action_chunking.py  # Action chunking strategies
-│   │   └── quantization.py     # INT8/INT4 quantization
-│   ├── training/
-│   │   └── finetune.py         # LoRA fine-tuning pipeline
-│   ├── evaluation/             # 4 innovation experiments
-│   │   ├── evaluator.py        # Core evaluation engine
-│   │   ├── language_generalization.py  # Exp 1: Language generalization
-│   │   ├── robustness_analysis.py      # Exp 2: Visual robustness
-│   │   ├── chunking_ablation.py        # Exp 3: Action chunking
-│   │   └── efficiency_benchmark.py     # Exp 4: Compute efficiency
-│   └── visualization/
-│       └── plot_results.py     # Publication-quality plotting
-├── scripts/                    # One-click scripts
-│   ├── run_finetune.sh         # Fine-tune SmolVLA
-│   ├── run_eval_all.sh         # Run all experiments
-│   └── download_data.sh        # Download LIBERO data
-├── notebooks/
-│   └── kaggle_smolvla_experiment.ipynb  # Kaggle notebook
-└── results/                    # Experiment outputs
-    └── figures/                # Generated plots
-```
+如果你现在是从零开始，最推荐的顺序是:
 
-## 🚀 Quick Start
+### Step 1. 跑通基础环境
 
-### 1. Installation
-
-**For Local Machines (with Conda):**
 ```bash
-# Clone
-git clone https://github.com/langchengg/SmolVLA-MuJoCo.git
-cd SmolVLA-MuJoCo
-
-# Create environment
-conda create -n smolvla python=3.10 -y
-conda activate smolvla
-
-# Install dependencies
-pip install -r requirements.txt
+python3 -m venv .venv
+source .venv/bin/activate
 pip install -e .
+bash scripts/bootstrap_lerobot.sh
 ```
 
-**For Kaggle / Google Colab:**
-```bash
-# You don't need conda, just use the built-in pip:
-# (If you already cloned, skip the first two lines)
-git clone https://github.com/langchengg/SmolVLA-MuJoCo.git
-cd SmolVLA-MuJoCo
+说明:
 
-pip install -r requirements.txt
-pip install -e .
-```
+- `pip install -e .` 安装本仓库里的分析工具
+- `bootstrap_lerobot.sh` 会把 `LeRobot` 克隆到 `third_party/lerobot`
+- 同时安装官方建议的 `.[smolvla]` 和 `.[libero]` 依赖
 
-### 2. Download Data
+### Step 2. 先跑一个最小 LIBERO 训练
 
 ```bash
-bash scripts/download_data.sh
+export HF_USER=your_huggingface_username
+export POLICY_REPO_ID=$HF_USER/libero-smolvla-demo
+export MUJOCO_GL=egl
+bash scripts/train_libero_smolvla.sh
 ```
 
-### 3. Fine-tune SmolVLA
+默认模板是一个适合个人项目的轻量起步版本:
+
+- dataset: `HuggingFaceVLA/libero`
+- task: `libero_10`
+- steps: `20000`
+- batch_size: `4`
+
+### Step 3. 跑评估
 
 ```bash
-# Option A: Using LeRobot CLI (recommended)
-lerobot-train --policy=smolvla --dataset.repo_id=lerobot/libero_object_image
-
-# Option B: Using custom script
-bash scripts/run_finetune.sh
+export POLICY_PATH=$HF_USER/libero-smolvla-demo
+export TASKS=libero_10
+export MUJOCO_GL=egl
+bash scripts/eval_libero_smolvla.sh
 ```
 
-### 4. Run All Experiments
+如果你想做多套件 benchmark，可以把:
 
 ```bash
-# Full evaluation (4 innovation experiments)
-bash scripts/run_eval_all.sh --checkpoint ./results/checkpoints/best
-
-# Quick smoke test
-bash scripts/run_eval_all.sh --smoke_test
+export TASKS=libero_object,libero_spatial,libero_goal,libero_10
 ```
 
-## 🔬 Experiments
+### Step 4. 汇总结果并出图
 
-### Experiment 1: Multi-Task Language Generalization
-
-Tests whether the model can follow semantically equivalent but lexically different instructions.
-
-| Instruction | Original | Synonym (Easy) | Paraphrase (Medium) | Structural (Hard) |
-|-------------|----------|----------------|---------------------|-------------------|
-| "pick up the red cube" | 85% | 78% | 72% | 61% |
-| "put the bowl on the plate" | 82% | 75% | 68% | 55% |
-| "push the blue button" | 90% | 84% | 79% | 70% |
-
-**Key Finding**: SmolVLA shows strong synonym robustness but degrades ~25% under structural rewrites, suggesting the action expert relies partially on syntactic patterns.
-
-### Experiment 2: Visual Perturbation Robustness
-
-Systematic evaluation under controlled visual perturbations.
-
-| Perturbation | Fine-tuned | Degradation |
-|-------------|-----------|-------------|
-| Baseline | 85.0% | — |
-| Brightness ×0.5 | 72.3% | -12.7% |
-| Brightness ×1.5 | 78.6% | -6.4% |
-| Noise σ=0.05 | 74.1% | -10.9% |
-| Noise σ=0.10 | 58.2% | -26.8% |
-| Camera Shift | 69.5% | -15.5% |
-
-**Key Finding**: Gaussian noise is the most damaging perturbation; brightness changes are more tolerable, suggesting SigLIP's learned representations are partially brightness-invariant.
-
-### Experiment 3: Action Chunking Ablation
-
-Trade-off between motion smoothness and task success.
-
-| Chunk Size | Ensemble | Success Rate | Jerk ↓ | Model Calls |
-|-----------|----------|-------------|--------|-------------|
-| 1 | ✗ | 85.0% | 0.0342 | 300 |
-| 4 | ✗ | 83.2% | 0.0128 | 75 |
-| 8 | ✗ | 79.6% | 0.0067 | 38 |
-| 8 | ✓ | 81.3% | 0.0051 | 38 |
-| 16 | ✗ | 71.8% | 0.0031 | 19 |
-
-**Key Finding**: chunk_size=4 offers the best balance. Temporal ensemble at chunk_size=8 recovers ~2% success rate while further improving smoothness.
-
-### Experiment 4: Computational Efficiency
-
-Real-time control feasibility analysis.
-
-| Config | Latency (ms) | Throughput (Hz) | Memory (MB) | Realtime? |
-|--------|-------------|-----------------|-------------|-----------|
-| FP32 | 156.3 | 6.4 | 1820 | ❌ |
-| FP16 | 48.2 | 20.7 | 912 | ✅ |
-| BF16 | 45.8 | 21.8 | 918 | ✅ |
-| INT8 | 38.4 | 26.0 | 680 | ✅ |
-| INT4 | 28.7 | 34.8 | 420 | ✅ |
-
-**Key Finding**: INT8 quantization reduces memory by 63% and doubles throughput while maintaining 97% of FP32 accuracy. INT4 further pushes throughput to 34.8Hz, well exceeding the 10Hz real-time threshold.
-
-## 📊 Key Results
-
-### Summary
-
-| Dimension | Key Metric | Best Config |
-|-----------|-----------|-------------|
-| Language Generalization | 61-85% across difficulty levels | LoRA fine-tuned base |
-| Visual Robustness | Most robust to brightness, sensitive to noise | Fine-tuned + augmentation |
-| Action Chunking | Best balance at chunk_size=4 | Standard (no ensemble) |
-| Compute Efficiency | 34.8Hz @ INT4, real-time capable | INT8 (best accuracy/speed) |
-
-### Sim-to-Real Transfer Discussion
-
-While this project focuses on simulation evaluation, the findings directly inform real-world deployment:
-
-- **Language generalization** results suggest the need for instruction-diverse training data
-- **Visual robustness** analysis identifies the perturbation types most likely to cause failure in real environments
-- **Action chunking** sweet-spot (chunk_size=4) balances reactive control with smooth execution
-- **INT4 quantization** enables deployment on edge devices (Jetson Orin, RPi5+accelerator)
-
-## 🔧 Configuration
-
-All experiments are configured via YAML files in `configs/`. Key parameters:
-
-```yaml
-# configs/eval_config.yaml
-evaluation:
-  n_episodes: 50
-  language_generalization:
-    enabled: true
-    instruction_variants: [...]
-  robustness:
-    enabled: true
-    perturbation_types: [brightness, contrast, noise, ...]
-  chunking:
-    chunk_sizes: [1, 2, 4, 8, 16]
-  efficiency:
-    configurations: [fp32, fp16, bf16, int8, int4]
+```bash
+python3 scripts/analyze_results.py \
+  --input examples/sample_results.csv \
+  --output reports/sample
 ```
 
-## 🏋️ Training on Kaggle
+会生成:
 
-This project is designed to run on Kaggle's free GPU (T4):
+- `summary.md`
+- `generalization_matrix.png`
+- `visual_robustness.png`
+- `chunking_tradeoff.png`
+- `latency_tradeoff.png`
 
-1. Upload this repo to Kaggle
-2. Enable GPU accelerator (T4 × 1)
-3. Run the provided notebook: `notebooks/kaggle_smolvla_experiment.ipynb`
+### Step 5. 再做桌面排序 showcase
 
-Expected training time: ~8 hours for 20K steps on T4.
+你接下来做的不是再开一个新仓库，而是在当前仓库里新增一个 `showcase task family`。
 
-## 📚 References
+这部分的任务规格在:
 
-- [SmolVLA: A Small Vision-Language-Action Model](https://huggingface.co/HuggingFaceTB/SmolVLA-base)
-- [LeRobot: Making AI for Robotics More Accessible](https://github.com/huggingface/lerobot)
-- [LIBERO: Lifelong Robot Learning Benchmark](https://libero-project.github.io/)
-- [LoRA: Low-Rank Adaptation of Large Language Models](https://arxiv.org/abs/2106.09685)
+- [docs/mujoco_scene_task_spec.md](docs/mujoco_scene_task_spec.md)
+- [configs/desktop_sorting_showcase.yaml](configs/desktop_sorting_showcase.yaml)
+- [templates/desktop_sorting_prompts.yaml](templates/desktop_sorting_prompts.yaml)
 
-## 📋 Citation
+### Step 6. 录视频并补 GitHub 首页素材
 
-```bibtex
-@misc{smolvla-mujoco-2025,
-  title={SmolVLA-MuJoCo: Systematic Evaluation of Vision-Language-Action Models in Simulated Manipulation},
-  author={Your Name},
-  year={2025},
-  url={https://github.com/yourusername/smolvla-mujoco}
-}
-```
+你最后放到 GitHub 首页最重要的，不是代码截图，而是:
 
-## License
+1. 一个 `20-35 秒` 的短 demo
+2. 一张 benchmark 汇总图
+3. 一张 zero-shot vs fine-tuned 对比图
+4. 一张失败案例图或短片段
 
-MIT License
+## 7. Benchmark 主线怎么做
+
+你的 benchmark 主线建议这样安排:
+
+### 7.1 Baseline
+
+- `SmolVLA zero-shot`
+- `SmolVLA fine-tuned`
+
+### 7.2 语言泛化
+
+例如:
+
+- train: `pick up red cube`
+- eval: `grasp the crimson block`
+
+### 7.3 空间泛化
+
+例如:
+
+- 改变物体初始位置
+- 左偏 `5cm`
+- 右偏 `5cm`
+
+### 7.4 视觉扰动
+
+例如:
+
+- 低光照
+- 杂乱背景
+- 相机 yaw 变化
+
+### 7.5 Action chunking
+
+例如比较:
+
+- `chunk_size=1`
+- `chunk_size=4`
+- `chunk_size=8`
+- `chunk_size=16`
+
+### 7.6 量化与延迟
+
+例如比较:
+
+- `fp16`
+- `int8`
+- `int4`
+
+核心目标不是追求最强 SOTA，而是回答:
+
+`在有限算力下，SmolVLA 在仿真任务里能不能做到可复现、可泛化、可实时。`
+
+## 8. Showcase 主线怎么做
+
+桌面抓取与多物体排序是整个项目里最适合出视频的一部分。
+
+### 8.1 推荐任务形式
+
+- `Pick up the red cube and place it in the left tray.`
+- `Sort all blue objects into the right tray.`
+- `Place cylinders in the back bin and cubes in the front tray.`
+- `Move warm-colored objects to the left tray.`
+
+### 8.2 为什么它重要
+
+- 它能直接展示 VLA 的文本条件控制
+- 它对非机器人方向面试官更友好
+- 它更适合做 README 顶部 gif 或 mp4
+- 它可以自然展示 zero-shot 和 fine-tuned 的差异
+
+### 8.3 这部分不是替代 benchmark
+
+最好的方式不是:
+
+- 只做一个酷炫视频
+
+而是:
+
+- benchmark 给出定量分析
+- showcase 给出定性展示
+
+## 9. MuJoCo 场景任务规格
+
+完整规格见:
+
+- [docs/mujoco_scene_task_spec.md](docs/mujoco_scene_task_spec.md)
+
+你可以把这个场景理解成一个可控的 tabletop sorting benchmark。
+
+最小版本建议:
+
+- 机器人: `Franka Panda`
+- 桌面: `1`
+- tray/bin: `2-3`
+- 物体数: `4-6`
+- 物体属性: color / shape / size / pose
+- 相机: front / wrist / top-down
+
+## 10. 指令模板
+
+完整模板见:
+
+- [templates/desktop_sorting_prompts.yaml](templates/desktop_sorting_prompts.yaml)
+
+模板被分成:
+
+- exact instructions
+- paraphrase instructions
+- compositional instructions
+- robustness instructions
+
+这样后面你做泛化评测时，不会临时乱写 prompt。
+
+## 11. 评测日志格式
+
+完整定义见:
+
+- [docs/eval_log_format.md](docs/eval_log_format.md)
+- [examples/desktop_sorting_eval_log.jsonl](examples/desktop_sorting_eval_log.jsonl)
+- [examples/desktop_sorting_eval_summary.csv](examples/desktop_sorting_eval_summary.csv)
+
+我建议:
+
+- `episode-level log` 用 `JSONL`
+- `aggregate summary` 用 `CSV`
+
+理由:
+
+- JSONL 适合保存每个 episode 的细粒度信息
+- CSV 适合后续画图、做表格、发 GitHub
+
+## 12. Colab / Kaggle 怎么用
+
+如果你本地算力有限，可以直接从 notebook 草稿开始:
+
+- [notebooks/colab_smolvla_libero.ipynb](notebooks/colab_smolvla_libero.ipynb)
+- [notebooks/kaggle_smolvla_libero.ipynb](notebooks/kaggle_smolvla_libero.ipynb)
+
+推荐分工:
+
+- `Colab`: 快速安装检查、小规模训练、功能验证
+- `Kaggle`: 长一点的单卡训练与日志导出
+
+## 13. 你放到 GitHub 上时，建议保留什么
+
+### 建议上传
+
+- 所有配置文件
+- 所有训练和评估脚本
+- 分析脚本
+- 小体积示例结果
+- 图表
+- 文档
+- notebook 草稿
+
+### 不建议上传
+
+- 大模型权重
+- 大量原始视频
+- 大数据集缓存
+- 临时 checkpoint
+
+`.gitignore` 里已经帮你避开了这些大文件目录。
+
+## 14. GitHub 首页建议顺序
+
+你将来真正发布时，README 首页建议按这个顺序排:
+
+1. 项目一句话简介
+2. demo gif 或 mp4
+3. benchmark 任务与结果摘要
+4. 技术栈
+5. 快速开始
+6. 项目结构
+7. benchmark 设计
+8. showcase 设计
+9. 核心结果图
+10. 失败案例与局限性
+11. 未来工作
+
+## 15. 简历怎么写
+
+可以写:
+
+- Built a simulation-first VLA benchmark with SmolVLA, LeRobot, LIBERO, and MuJoCo for language-conditioned robotic manipulation.
+- Designed a MuJoCo desktop sorting showcase to visualize text-conditioned grasping and multi-object sorting under paraphrase and visual perturbation settings.
+- Quantified generalization, robustness, action chunking, and inference latency trade-offs with reproducible logs and analysis plots.
+
+不要写:
+
+- deployed to real robots
+- validated sim-to-real transfer
+- production-ready embodied system
+
+## 16. 没有真机会不会减分吗
+
+不会。
+
+真正减分的是:
+
+- 只会跑别人 repo
+- 没有实验问题
+- 没有日志和图表
+- 把 simulation 写成 real-world
+
+你如果把这个仓库做成现在这套结构，反而会显得:
+
+- 会复现
+- 会设计实验
+- 会写分析
+- 会做展示
+- 会诚实定义边界
+
+## 17. 当前官方参考资料
+
+这套模板当前对齐的是公开官方资料:
+
+- [SmolVLA blog](https://huggingface.co/blog/smolvla)
+- [SmolVLA docs](https://huggingface.co/docs/lerobot/smolvla)
+- [LIBERO docs in LeRobot](https://huggingface.co/docs/lerobot/libero)
+- [SmolVLA base model](https://huggingface.co/lerobot/smolvla_base)
+- [HuggingFaceVLA/libero](https://huggingface.co/datasets/HuggingFaceVLA/libero)
+- [physical-intelligence/libero](https://huggingface.co/datasets/physical-intelligence/libero)
+- [panda_moveit_config](https://github.com/moveit/panda_moveit_config)
+- [mujoco_ros2_control](https://github.com/moveit/mujoco_ros2_control)
+
+根据 Hugging Face 在 `2025-06-03` 发布的 SmolVLA 博客，SmolVLA 被描述为
+一个 `450M` 规模、适合消费级硬件运行的开源 VLA，并支持异步推理来提升
+响应速度和任务吞吐。
+
+## 18. 现在最推荐你做的第一版
+
+如果你只先做一个月版本，请按这个范围收敛:
+
+1. 跑通 `SmolVLA + LIBERO + MuJoCo`
+2. 只做 `libero_10`
+3. 做 `zero-shot vs fine-tuned`
+4. 做语言泛化、视觉扰动、chunking 三个分析
+5. 加一个 desktop sorting demo
+6. 录一个短视频
+7. 把图和结论写进 GitHub 首页
+
+这已经足够成为一个很像样的 GitHub 项目了。

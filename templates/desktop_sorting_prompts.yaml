@@ -1,0 +1,46 @@
+prompt_sets:
+  exact_single_object:
+    - id: exact_pick_red_cube_left_tray
+      text: "Pick up the red cube and place it in the left tray."
+    - id: exact_pick_blue_cylinder_back_bin
+      text: "Move the blue cylinder to the back bin."
+    - id: exact_pick_yellow_block_right_tray
+      text: "Place the yellow block in the right tray."
+
+  exact_multi_object:
+    - id: exact_sort_blue_right_tray
+      text: "Sort all blue objects into the right tray."
+    - id: exact_sort_cylinders_back_bin
+      text: "Place cylinders in the back bin and cubes in the front tray."
+    - id: exact_sort_warm_colors_left
+      text: "Move warm-colored objects to the left tray."
+
+  paraphrase:
+    - id: para_crimson_block_left_tray
+      text: "Grasp the crimson block and drop it into the left tray."
+    - id: para_bluish_items_right_tray
+      text: "Put the bluish items into the tray on the right."
+    - id: para_round_objects_back
+      text: "Move the round objects to the rear bin."
+
+  compositional:
+    - id: comp_warm_left_cool_right
+      text: "Place warm-colored objects in the left tray and cool-colored objects in the right tray."
+    - id: comp_cubes_front_cylinders_back
+      text: "Put cubes at the front and cylinders at the back."
+    - id: comp_red_blue_split
+      text: "Move red and orange objects left, and blue objects right."
+
+  robustness:
+    - id: robust_low_light_blue_sort
+      text: "Sort all blue objects into the right tray."
+      tags:
+        - low_light
+    - id: robust_clutter_red_cube
+      text: "Pick up the red cube and place it in the left tray."
+      tags:
+        - clutter_background
+    - id: robust_camera_yaw_cylinders
+      text: "Place cylinders in the back bin and cubes in the front tray."
+      tags:
+        - camera_yaw_20deg

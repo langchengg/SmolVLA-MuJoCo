@@ -1,0 +1,53 @@
+project:
+  name: smolvla-libero-panda-benchmark
+  title: SmolVLA Generalization and Efficiency Benchmark on Panda
+
+robot:
+  sim: panda
+  benchmark_robot_type: panda
+  moveit_config_repo: moveit/panda_moveit_config
+  mujoco_bridge_repo: moveit/mujoco_ros2_control
+
+dataset:
+  primary_repo_id: HuggingFaceVLA/libero
+  backup_repo_id: physical-intelligence/libero
+  task_suite: libero_10
+
+experiments:
+  model_variants:
+    - zero_shot
+    - finetuned
+  language_variants:
+    - exact
+    - paraphrase
+  spatial_variants:
+    - nominal
+    - shifted_left_5cm
+    - shifted_right_5cm
+  visual_variants:
+    - nominal
+    - low_light
+    - clutter_background
+    - camera_yaw_15deg
+  chunk_sizes:
+    - 1
+    - 4
+    - 8
+    - 16
+  quantization:
+    - fp16
+    - int8
+    - int4
+
+metrics:
+  - success_rate
+  - latency_ms
+  - rollout_hz
+  - trajectory_jerk
+  - episode_time_s
+
+selection_rules:
+  realtime_threshold_hz: 10.0
+  preferred_chunk_size_range:
+    min: 4
+    max: 8
