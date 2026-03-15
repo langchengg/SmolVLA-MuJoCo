@@ -186,6 +186,14 @@ class SmolVLAMuJoCoEnv:
         
         # Clip action to valid range
         if hasattr(self._env, 'action_space'):
+            env_action_dim = self._env.action_space.shape[0]
+            if action.shape[0] > env_action_dim:
+                action = action[:env_action_dim]
+            elif action.shape[0] < env_action_dim:
+                padded_action = np.zeros(env_action_dim, dtype=action.dtype)
+                padded_action[:action.shape[0]] = action
+                action = padded_action
+                
             action = np.clip(action, self._env.action_space.low, self._env.action_space.high)
         
         result = self._env.step(action)
