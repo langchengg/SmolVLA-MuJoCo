@@ -103,8 +103,8 @@
 **For Local Machines (with Conda):**
 ```bash
 # Clone
-git clone https://github.com/yourusername/smolvla-mujoco.git
-cd smolvla-mujoco
+git clone https://github.com/langchengg/SmolVLA-MuJoCo.git
+cd SmolVLA-MuJoCo
 
 # Create environment
 conda create -n smolvla python=3.10 -y
