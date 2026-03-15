@@ -119,8 +119,8 @@ pip install -e .
 ```bash
 # You don't need conda, just use the built-in pip:
 # (If you already cloned, skip the first two lines)
-git clone https://github.com/yourusername/smolvla-mujoco.git
-cd smolvla-mujoco
+git clone https://github.com/langchengg/SmolVLA-MuJoCo.git
+cd SmolVLA-MuJoCo
 
 pip install -r requirements.txt
 pip install -e .
