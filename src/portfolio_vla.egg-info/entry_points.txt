@@ -1,0 +1,4 @@
+[console_scripts]
+portfolio-vla-benchmark = portfolio_vla.cli:benchmark_entrypoint
+portfolio-vla-export-readme = portfolio_vla.cli:readme_assets_entrypoint
+portfolio-vla-showcase = portfolio_vla.cli:showcase_entrypoint

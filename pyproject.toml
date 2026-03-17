@@ -4,15 +4,25 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "portfolio-vla"
-version = "0.1.0"
-description = "Portfolio starter for SmolVLA benchmarking on MuJoCo and MoveIt"
+version = "0.2.0"
+description = "Self-contained MuJoCo desktop sorting demo and mock benchmark for GitHub-ready VLA portfolios"
 readme = "README.md"
 requires-python = ">=3.10"
 dependencies = [
+  "imageio>=2.37",
+  "imageio-ffmpeg>=0.5.1",
   "matplotlib>=3.8",
+  "mujoco>=3.2",
+  "numpy>=1.26",
   "pandas>=2.2",
+  "pillow>=10.4",
   "pyyaml>=6.0",
 ]
+
+[project.scripts]
+portfolio-vla-showcase = "portfolio_vla.cli:showcase_entrypoint"
+portfolio-vla-benchmark = "portfolio_vla.cli:benchmark_entrypoint"
+portfolio-vla-export-readme = "portfolio_vla.cli:readme_assets_entrypoint"
 
 [tool.setuptools]
 package-dir = {"" = "src"}

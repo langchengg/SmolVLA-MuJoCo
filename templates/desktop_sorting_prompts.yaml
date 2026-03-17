@@ -2,45 +2,219 @@ prompt_sets:
   exact_single_object:
     - id: exact_pick_red_cube_left_tray
       text: "Pick up the red cube and place it in the left tray."
+      task_family: single_object_pick_place
+      language_variant: exact
+      selector:
+        mode: exact_object
+        object: red_cube
+      placement:
+        mode: single_container
+        container: left_tray
+
     - id: exact_pick_blue_cylinder_back_bin
       text: "Move the blue cylinder to the back bin."
+      task_family: single_object_pick_place
+      language_variant: exact
+      selector:
+        mode: exact_object
+        object: blue_cylinder
+      placement:
+        mode: single_container
+        container: back_bin
+
     - id: exact_pick_yellow_block_right_tray
       text: "Place the yellow block in the right tray."
+      task_family: single_object_pick_place
+      language_variant: exact
+      selector:
+        mode: exact_object
+        object: yellow_block
+      placement:
+        mode: single_container
+        container: right_tray
 
   exact_multi_object:
     - id: exact_sort_blue_right_tray
       text: "Sort all blue objects into the right tray."
+      task_family: color_grouping
+      language_variant: exact
+      selector:
+        mode: by_color
+        color: blue
+      placement:
+        mode: single_container
+        container: right_tray
+
     - id: exact_sort_cylinders_back_bin
       text: "Place cylinders in the back bin and cubes in the front tray."
+      task_family: shape_grouping
+      language_variant: exact
+      selector:
+        mode: by_shape
+        shape: cylinder
+      placement:
+        mode: group_rules
+        rules:
+          - selector:
+              mode: by_shape
+              shape: cylinder
+            container: back_bin
+          - selector:
+              mode: by_shape
+              shape: cube
+            container: left_tray
+
     - id: exact_sort_warm_colors_left
       text: "Move warm-colored objects to the left tray."
+      task_family: color_grouping
+      language_variant: exact
+      selector:
+        mode: by_palette
+        palette: warm
+      placement:
+        mode: single_container
+        container: left_tray
 
   paraphrase:
     - id: para_crimson_block_left_tray
       text: "Grasp the crimson block and drop it into the left tray."
+      task_family: paraphrase_generalization
+      language_variant: paraphrase
+      selector:
+        mode: exact_object
+        object: red_cube
+      placement:
+        mode: single_container
+        container: left_tray
+
     - id: para_bluish_items_right_tray
       text: "Put the bluish items into the tray on the right."
+      task_family: paraphrase_generalization
+      language_variant: paraphrase
+      selector:
+        mode: by_color
+        color: blue
+      placement:
+        mode: single_container
+        container: right_tray
+
     - id: para_round_objects_back
       text: "Move the round objects to the rear bin."
+      task_family: paraphrase_generalization
+      language_variant: paraphrase
+      selector:
+        mode: by_shape
+        shape: cylinder
+      placement:
+        mode: single_container
+        container: back_bin
 
   compositional:
     - id: comp_warm_left_cool_right
       text: "Place warm-colored objects in the left tray and cool-colored objects in the right tray."
+      task_family: compositional_sorting
+      language_variant: exact
+      selector:
+        mode: by_palette
+        palette: warm
+      placement:
+        mode: group_rules
+        rules:
+          - selector:
+              mode: by_palette
+              palette: warm
+            container: left_tray
+          - selector:
+              mode: by_palette
+              palette: cool
+            container: right_tray
+
     - id: comp_cubes_front_cylinders_back
       text: "Put cubes at the front and cylinders at the back."
+      task_family: compositional_sorting
+      language_variant: exact
+      selector:
+        mode: by_shape
+        shape: cube
+      placement:
+        mode: group_rules
+        rules:
+          - selector:
+              mode: by_shape
+              shape: cube
+            container: left_tray
+          - selector:
+              mode: by_shape
+              shape: cylinder
+            container: back_bin
+
     - id: comp_red_blue_split
       text: "Move red and orange objects left, and blue objects right."
+      task_family: compositional_sorting
+      language_variant: exact
+      selector:
+        mode: by_color
+        color: red
+      placement:
+        mode: group_rules
+        rules:
+          - selector:
+              mode: by_color
+              color: red
+            container: left_tray
+          - selector:
+              mode: by_color
+              color: orange
+            container: left_tray
+          - selector:
+              mode: by_color
+              color: blue
+            container: right_tray
 
   robustness:
     - id: robust_low_light_blue_sort
       text: "Sort all blue objects into the right tray."
+      task_family: color_grouping
+      language_variant: exact
+      selector:
+        mode: by_color
+        color: blue
+      placement:
+        mode: single_container
+        container: right_tray
       tags:
         - low_light
+
     - id: robust_clutter_red_cube
       text: "Pick up the red cube and place it in the left tray."
+      task_family: single_object_pick_place
+      language_variant: exact
+      selector:
+        mode: exact_object
+        object: red_cube
+      placement:
+        mode: single_container
+        container: left_tray
       tags:
         - clutter_background
+
     - id: robust_camera_yaw_cylinders
       text: "Place cylinders in the back bin and cubes in the front tray."
+      task_family: shape_grouping
+      language_variant: exact
+      selector:
+        mode: by_shape
+        shape: cylinder
+      placement:
+        mode: group_rules
+        rules:
+          - selector:
+              mode: by_shape
+              shape: cylinder
+            container: back_bin
+          - selector:
+              mode: by_shape
+              shape: cube
+            container: left_tray
       tags:
         - camera_yaw_20deg

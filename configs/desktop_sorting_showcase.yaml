@@ -2,7 +2,7 @@ showcase:
   name: desktop-sorting-showcase
   title: Language-Driven Desktop Grasping and Multi-Object Sorting
   simulator: mujoco
-  robot: panda
+  robot: lightweight_cartesian_arm
   workspace: tabletop_two_trays
   scene_version: v1
 
@@ -27,13 +27,6 @@ task_family:
     train: 4
     eval: 5
 
-prompt_templates:
-  - "Pick up the red cube and place it in the left tray."
-  - "Sort all blue objects into the right tray."
-  - "Place cylinders in the back bin and cubes in the front tray."
-  - "Move the warm-colored objects to the left tray."
-  - "Grasp the crimson block and drop it into the left tray."
-
 cameras:
   primary: front_camera
   views:
@@ -43,12 +36,11 @@ cameras:
 
 randomization:
   object_pose: true
-  object_texture: true
+  object_texture: false
   lighting: true
   background_texture: true
   camera_yaw_deg:
     - 0
-    - 10
     - 20
 
 metrics:
@@ -63,8 +55,6 @@ metrics:
 logging:
   episode_log_format: jsonl
   aggregate_log_format: csv
-  episode_log_example: examples/desktop_sorting_eval_log.jsonl
-  aggregate_log_example: examples/desktop_sorting_eval_summary.csv
 
 video_plan:
   overlay_prompt: true
