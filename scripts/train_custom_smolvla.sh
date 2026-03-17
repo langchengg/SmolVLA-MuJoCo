@@ -4,14 +4,17 @@ set -euo pipefail
 
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 LEROBOT_DIR="${LEROBOT_DIR:-$ROOT_DIR/third_party/lerobot}"
+RUN_NAME="${RUN_NAME:-custom_smolvla_$(date +%Y%m%d_%H%M%S)}"
 
 : "${DATASET_REPO_ID:?Set DATASET_REPO_ID to your dataset on the Hugging Face Hub.}"
-: "${OUTPUT_DIR:=outputs/train/custom_smolvla}"
+: "${OUTPUT_DIR:=$ROOT_DIR/results/raw/train/$RUN_NAME}"
 : "${JOB_NAME:=custom_smolvla_training}"
 : "${BATCH_SIZE:=32}"
 : "${STEPS:=20000}"
 : "${POLICY_DEVICE:=cuda}"
 : "${WANDB_ENABLE:=false}"
+
+mkdir -p "$OUTPUT_DIR"
 
 cd "$LEROBOT_DIR"
 

@@ -6,23 +6,7 @@ from pathlib import Path
 import pandas as pd
 import yaml
 
-
-BENCHMARK_COLUMNS = [
-    "experiment_family",
-    "model_variant",
-    "task_suite",
-    "language_variant",
-    "spatial_variant",
-    "visual_variant",
-    "chunk_size",
-    "quantization",
-    "n_episodes",
-    "success_rate",
-    "latency_ms",
-    "rollout_hz",
-    "trajectory_jerk",
-    "episode_time_s",
-]
+from portfolio_vla.benchmark_registry import BENCHMARK_COLUMNS, normalize_registry_frame
 
 
 @dataclass(frozen=True)
@@ -74,6 +58,13 @@ def generate_mock_benchmark_frame(config: BenchmarkConfig) -> pd.DataFrame:
                 episode_time += 1.2 if spatial_variant != "nominal" else 0.0
                 rows.append(
                     {
+                        "source": "mock",
+                        "run_name": f"mock_{model_variant}_{language_variant}_{spatial_variant}",
+                        "policy_label": f"mock/{model_variant}",
+                        "checkpoint_step": pd.NA,
+                        "train_dir": "",
+                        "eval_dir": "",
+                        "policy_path": "",
                         "experiment_family": "generalization",
                         "model_variant": model_variant,
                         "task_suite": task_suite,
@@ -99,6 +90,13 @@ def generate_mock_benchmark_frame(config: BenchmarkConfig) -> pd.DataFrame:
         for visual_variant, penalty in penalties.items():
             rows.append(
                 {
+                    "source": "mock",
+                    "run_name": f"mock_{model_variant}_{visual_variant}",
+                    "policy_label": f"mock/{model_variant}",
+                    "checkpoint_step": pd.NA,
+                    "train_dir": "",
+                    "eval_dir": "",
+                    "policy_path": "",
                     "experiment_family": "visual_robustness",
                     "model_variant": model_variant,
                     "task_suite": task_suite,
@@ -134,6 +132,13 @@ def generate_mock_benchmark_frame(config: BenchmarkConfig) -> pd.DataFrame:
         for chunk_size, (success, latency, hz, jerk, episode_time) in values.items():
             rows.append(
                 {
+                    "source": "mock",
+                    "run_name": f"mock_{model_variant}_chunk_{chunk_size}",
+                    "policy_label": f"mock/{model_variant}",
+                    "checkpoint_step": pd.NA,
+                    "train_dir": "",
+                    "eval_dir": "",
+                    "policy_path": "",
                     "experiment_family": "chunking",
                     "model_variant": model_variant,
                     "task_suite": task_suite,
@@ -159,6 +164,13 @@ def generate_mock_benchmark_frame(config: BenchmarkConfig) -> pd.DataFrame:
     for quantization, (success, latency, hz, jerk, episode_time) in latency_rows.items():
         rows.append(
             {
+                "source": "mock",
+                "run_name": f"mock_finetuned_{quantization}",
+                "policy_label": "mock/finetuned",
+                "checkpoint_step": pd.NA,
+                "train_dir": "",
+                "eval_dir": "",
+                "policy_path": "",
                 "experiment_family": "latency",
                 "model_variant": "finetuned",
                 "task_suite": task_suite,
@@ -176,4 +188,4 @@ def generate_mock_benchmark_frame(config: BenchmarkConfig) -> pd.DataFrame:
             }
         )
 
-    return pd.DataFrame(rows, columns=BENCHMARK_COLUMNS)
+    return normalize_registry_frame(pd.DataFrame(rows, columns=BENCHMARK_COLUMNS))

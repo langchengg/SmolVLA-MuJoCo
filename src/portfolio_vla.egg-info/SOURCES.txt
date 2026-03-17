@@ -3,10 +3,12 @@ pyproject.toml
 src/portfolio_vla/__init__.py
 src/portfolio_vla/analysis.py
 src/portfolio_vla/benchmark_mock.py
+src/portfolio_vla/benchmark_registry.py
 src/portfolio_vla/cli.py
 src/portfolio_vla/plotting.py
 src/portfolio_vla/policy.py
 src/portfolio_vla/readme_assets.py
+src/portfolio_vla/real_results.py
 src/portfolio_vla/runner.py
 src/portfolio_vla/scene.py
 src/portfolio_vla/showcase_analysis.py
@@ -18,3 +20,5 @@ src/portfolio_vla.egg-info/dependency_links.txt
 src/portfolio_vla.egg-info/entry_points.txt
 src/portfolio_vla.egg-info/requires.txt
 src/portfolio_vla.egg-info/top_level.txt
+tests/test_real_results.py
+tests/test_showcase.py

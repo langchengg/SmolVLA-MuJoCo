@@ -4,12 +4,13 @@ set -euo pipefail
 
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 LEROBOT_DIR="${LEROBOT_DIR:-$ROOT_DIR/third_party/lerobot}"
+RUN_NAME="${RUN_NAME:-libero_smolvla_$(date +%Y%m%d_%H%M%S)}"
 
 : "${HF_USER:=your_huggingface_username}"
 : "${POLICY_REPO_ID:=$HF_USER/libero-smolvla-demo}"
 : "${DATASET_REPO_ID:=HuggingFaceVLA/libero}"
 : "${ENV_TASK:=libero_10}"
-: "${OUTPUT_DIR:=./outputs/libero_smolvla}"
+: "${OUTPUT_DIR:=$ROOT_DIR/results/raw/train/$RUN_NAME}"
 : "${STEPS:=20000}"
 : "${BATCH_SIZE:=4}"
 : "${EVAL_BATCH_SIZE:=1}"
@@ -18,6 +19,8 @@ LEROBOT_DIR="${LEROBOT_DIR:-$ROOT_DIR/third_party/lerobot}"
 : "${MUJOCO_GL:=egl}"
 
 export MUJOCO_GL
+
+mkdir -p "$OUTPUT_DIR"
 
 cd "$LEROBOT_DIR"
 

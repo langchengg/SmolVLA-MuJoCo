@@ -22,6 +22,7 @@ dependencies = [
 [project.scripts]
 portfolio-vla-showcase = "portfolio_vla.cli:showcase_entrypoint"
 portfolio-vla-benchmark = "portfolio_vla.cli:benchmark_entrypoint"
+portfolio-vla-promote-real = "portfolio_vla.cli:promote_real_entrypoint"
 portfolio-vla-export-readme = "portfolio_vla.cli:readme_assets_entrypoint"
 
 [tool.setuptools]

@@ -4,10 +4,11 @@ set -euo pipefail
 
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 LEROBOT_DIR="${LEROBOT_DIR:-$ROOT_DIR/third_party/lerobot}"
+RUN_NAME="${RUN_NAME:-libero_eval_$(date +%Y%m%d_%H%M%S)}"
 
 : "${POLICY_PATH:?Set POLICY_PATH to a HF policy id or a local checkpoint path.}"
 : "${TASKS:=libero_10}"
-: "${OUTPUT_DIR:=./eval_logs/libero_eval}"
+: "${OUTPUT_DIR:=$ROOT_DIR/results/raw/eval/$RUN_NAME}"
 : "${EVAL_BATCH_SIZE:=1}"
 : "${EVAL_EPISODES:=3}"
 : "${N_ACTION_STEPS:=10}"
@@ -15,6 +16,8 @@ LEROBOT_DIR="${LEROBOT_DIR:-$ROOT_DIR/third_party/lerobot}"
 : "${MUJOCO_GL:=egl}"
 
 export MUJOCO_GL
+
+mkdir -p "$OUTPUT_DIR"
 
 cd "$LEROBOT_DIR"
 

@@ -2,9 +2,11 @@
 
 __all__ = [
     "analysis",
+    "benchmark_registry",
     "benchmark_mock",
     "cli",
     "policy",
+    "real_results",
     "runner",
     "scene",
     "showcase_analysis",
