@@ -14,7 +14,7 @@ RUN_NAME="${RUN_NAME:-custom_smolvla_$(date +%Y%m%d_%H%M%S)}"
 : "${POLICY_DEVICE:=cuda}"
 : "${WANDB_ENABLE:=false}"
 
-mkdir -p "$OUTPUT_DIR"
+mkdir -p "$(dirname "$OUTPUT_DIR")"
 
 cd "$LEROBOT_DIR"
 

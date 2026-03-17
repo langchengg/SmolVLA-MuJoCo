@@ -20,7 +20,7 @@ RUN_NAME="${RUN_NAME:-libero_smolvla_$(date +%Y%m%d_%H%M%S)}"
 
 export MUJOCO_GL
 
-mkdir -p "$OUTPUT_DIR"
+mkdir -p "$(dirname "$OUTPUT_DIR")"
 
 cd "$LEROBOT_DIR"
 
