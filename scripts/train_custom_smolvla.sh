@@ -3,7 +3,6 @@
 set -euo pipefail
 
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
-LEROBOT_DIR="${LEROBOT_DIR:-$ROOT_DIR/third_party/lerobot}"
 RUN_NAME="${RUN_NAME:-custom_smolvla_$(date +%Y%m%d_%H%M%S)}"
 
 : "${DATASET_REPO_ID:?Set DATASET_REPO_ID to your dataset on the Hugging Face Hub.}"
@@ -16,7 +15,14 @@ RUN_NAME="${RUN_NAME:-custom_smolvla_$(date +%Y%m%d_%H%M%S)}"
 
 mkdir -p "$(dirname "$OUTPUT_DIR")"
 
-cd "$LEROBOT_DIR"
+WORK_DIR="${LEROBOT_DIR:-$ROOT_DIR}"
+
+if [[ ! -d "$WORK_DIR" ]]; then
+  echo "LEROBOT_DIR does not exist: $WORK_DIR" >&2
+  exit 1
+fi
+
+cd "$WORK_DIR"
 
 lerobot-train \
   --policy.path=lerobot/smolvla_base \

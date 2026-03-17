@@ -3,7 +3,6 @@
 set -euo pipefail
 
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
-LEROBOT_DIR="${LEROBOT_DIR:-$ROOT_DIR/third_party/lerobot}"
 RUN_NAME="${RUN_NAME:-libero_smolvla_$(date +%Y%m%d_%H%M%S)}"
 
 : "${HF_USER:=your_huggingface_username}"
@@ -22,7 +21,14 @@ export MUJOCO_GL
 
 mkdir -p "$(dirname "$OUTPUT_DIR")"
 
-cd "$LEROBOT_DIR"
+WORK_DIR="${LEROBOT_DIR:-$ROOT_DIR}"
+
+if [[ ! -d "$WORK_DIR" ]]; then
+  echo "LEROBOT_DIR does not exist: $WORK_DIR" >&2
+  exit 1
+fi
+
+cd "$WORK_DIR"
 
 # Official LIBERO docs show a 100k-step example. This template defaults to a
 # smaller run so you can start with a portfolio-friendly experiment budget.

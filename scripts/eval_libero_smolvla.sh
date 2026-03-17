@@ -3,7 +3,6 @@
 set -euo pipefail
 
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
-LEROBOT_DIR="${LEROBOT_DIR:-$ROOT_DIR/third_party/lerobot}"
 RUN_NAME="${RUN_NAME:-libero_eval_$(date +%Y%m%d_%H%M%S)}"
 
 : "${POLICY_PATH:?Set POLICY_PATH to a HF policy id or a local checkpoint path.}"
@@ -19,7 +18,14 @@ export MUJOCO_GL
 
 mkdir -p "$OUTPUT_DIR"
 
-cd "$LEROBOT_DIR"
+WORK_DIR="${LEROBOT_DIR:-$ROOT_DIR}"
+
+if [[ ! -d "$WORK_DIR" ]]; then
+  echo "LEROBOT_DIR does not exist: $WORK_DIR" >&2
+  exit 1
+fi
+
+cd "$WORK_DIR"
 
 lerobot-eval \
   --output_dir="$OUTPUT_DIR" \
